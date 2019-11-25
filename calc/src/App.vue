@@ -1,24 +1,28 @@
 <template>
   <div id="app">
     <div id="calcWrap">
-      <input type="text">
+      <input type="text" v-bind:value="current || 0">
       <div id="buttonWrap">
-        <button>7</button>
-        <button>8</button>
-        <button>9</button>
-        <button>+</button>
-        <button>4</button>
-        <button>5</button>
-        <button>6</button>
-        <button>-</button>
-        <button>1</button>
-        <button>2</button>
-        <button>3</button>
-        <button>*</button>
-        <button>C</button>
-        <button>0</button>
-        <button>.</button>
-        <button>/</button>
+        <!-- First Row -->
+        <button v-on:click="append('7')">7</button>
+        <button v-on:click="append('8')">8</button>
+        <button v-on:click="append('9')">9</button>
+        <button v-on:click="add()">+</button>
+        <!-- Second Row -->
+        <button v-on:click="append('4')">4</button>
+        <button v-on:click="append('5')">5</button>
+        <button v-on:click="append('6')">6</button>
+        <button v-on:click="minus()">-</button>
+        <!-- Third Row -->
+        <button v-on:click="append('1')">1</button>
+        <button v-on:click="append('2')">2</button>
+        <button v-on:click="append('3')">3</button>
+        <button v-on:click="multiplication()">*</button>
+        <!-- Fourth Row -->
+        <button v-on:click="current = ''">C</button>
+        <button v-on:click="append('0')">0</button>
+        <button v-on:click="equal()">=</button>
+        <button v-on:click="divide()">/</button>
       </div>
     </div>
   </div>
@@ -28,7 +32,49 @@
 export default {
   data () {
     return {
-      
+      current: '',
+      old: null,
+      operator: null,
+      operatorClick: false
+    }
+  },
+  methods: {
+    append: function(num) {
+      if(this.operatorClick) {
+        this.current = '';
+        this.operatorClick = false;
+      }
+      this.current = `${this.current}${num}`;
+    },
+
+    setOld: function() {
+      this.old = this.current;
+      this.operatorClick = true;
+    },
+
+    add: function() {
+      this.operator = (x, y) => x + y;
+      this.setOld();
+    },
+
+    minus: function() {
+      this.operator = (x, y) => x - y;
+      this.setOld();
+    },
+
+    multiplication: function() {
+      this.operator = (x, y) => x * y;
+      this.setOld();
+    },
+
+    divide: function() {
+      this.operator = (x, y) => x / y;
+      this.setOld();
+    },
+
+    equal: function() {
+      this.current = `${this.operator(parseFloat(this.current), parseFloat(this.old))}`;
+      this.old = null;
     }
   }
 }
@@ -66,6 +112,7 @@ export default {
     width: 85%;
     padding: 0.25rem 0.5rem;
     font-size: 2rem;
+    text-align: right;
   }
 
   #buttonWrap {
